@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Secure Bank App
+
+A simplified banking application built with Next.js and Prisma. 
+
+> **⚠️ WARNING:** This application contains **intentional security vulnerabilities** (e.g., weak password storage, potential prototype pollution points) for educational and testing purposes. Do not use this code or configuration in a production environment.
+
+## Tech Stack
+
+*   **Framework:** [Next.js 16](https://nextjs.org/) (App Directory)
+*   **Language:** TypeScript
+*   **Database:** PostgreSQL
+*   **ORM:** [Prisma](https://www.prisma.io/)
+*   **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+*   **Infrastructure:** Docker & Docker Compose
+
+## Prerequisites
+
+*   Node.js (v20+ recommended)
+*   npm, yarn, or pnpm
+*   Docker & Docker Compose (for the database)
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up the project locally.
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd secure-bank-app
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### 3. Start the Database
+
+This project uses Docker to host a PostgreSQL database.
+
+```bash
+docker-compose up -d
+```
+
+The database will be available at `localhost:5440`.
+
+**Credentials:**
+*   **User:** `bank_admin`
+*   **Password:** `secure_password_123`
+*   **Database:** `bank_db`
+
+### 4. Setup Prisma
+
+Generate the Prisma client and push the schema to the database.
+
+```bash
+# Generate the client
+npx prisma generate
+
+# Push the schema to the DB (creates tables)
+npx prisma db push
+```
+
+### 5. Run the Application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The database consists of two main models:
 
-## Learn More
+*   **User**: Stores account information.
+    *   *Note:* Passwords are currently stored insecurely (plain text/weak hash).
+    *   Includes a `settings` JSON field.
+*   **Transaction**: Records transfers between users.
 
-To learn more about Next.js, take a look at the following resources:
+You can verify the database state using Prisma Studio:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx prisma studio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Vulnerabilities
 
-## Deploy on Vercel
+This project is designed to demonstrate specific security flaws, including but not limited to:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1.  **Encoded Password Exposure**: Passwords in the `User` model may be stored without proper hashing/salting.
+2.  **Prototype Pollution**: The loose `settings` JSON field in the `User` model is a potential vector for prototype pollution attacks.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+[MIT](LICENSE)

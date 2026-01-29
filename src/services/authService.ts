@@ -1,4 +1,10 @@
 import { prisma } from "@/src/lib/prisma";
+import jwt from "jsonwebtoken";
+
+// VULNERABILITY: Weak Secret for JWT
+// Dans un vrai projet, ceci doit être une variable d'env complexe (process.env.JWT_SECRET)
+// Ici, on le met en dur et très simple pour qu'il soit "crackable".
+const WEAK_SECRET = "12345";
 
 export class AuthService {
   /**
@@ -41,7 +47,7 @@ export class AuthService {
   }
 
   /**
-   * Logs in a user.
+   * Logs in a user AND Generates an Insecure JWT
    * The Service doesn't care if it came from a GET or POST, it just checks credentials.
    */
   async login(email: string, password: string) {
@@ -58,9 +64,23 @@ export class AuthService {
       };
     }
 
+    // --- Vulnerability: Insecure JWT Generation ---
+    //1. Weak Algorithm (HS256 is fine, but the secret is weak)
+    //2. Sensitive Data Exposure: We put the 'isAdmin' flag explicitely in the token.
+    // If a hacker changes 'isAdmin' to true and re-signs with "12345", they gain admin access.
+    const token = jwt.sign(
+      { 
+        id: user.id,
+        email: user.email,
+        isAdmin: user.isAdmin },
+      WEAK_SECRET,
+      { expiresIn: "1h" }
+    );
+
     return { 
       success: true, 
       message: "Login successful", 
+      token,
       user: { 
         id: user.id, 
         email: user.email, 

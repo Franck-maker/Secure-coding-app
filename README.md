@@ -54,6 +54,13 @@ The database will be available at `localhost:5440`.
 
 ### 4. Setup Prisma
 
+Set your environment variables with the ".env" file. 
+You may copy the contents of the ".env.example" file.
+
+```bash
+cp .env.example .env
+```
+
 Generate the Prisma client and push the schema to the database.
 
 ```bash
@@ -93,7 +100,3 @@ This project is designed to demonstrate specific security flaws, including but n
 
 1.  **Encoded Password Exposure**: Passwords in the `User` model may be stored without proper hashing/salting.
 2.  **Prototype Pollution**: The loose `settings` JSON field in the `User` model is a potential vector for prototype pollution attacks.
-
-## License
-
-[MIT](LICENSE)

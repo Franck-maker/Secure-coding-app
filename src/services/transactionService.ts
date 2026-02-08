@@ -2,20 +2,12 @@ import {prisma} from '../lib/prisma';
 
 export class TransactionService {
     async transfer(senderId: number, receiverEmail: string, amount: number) {
-        // Basic validation but not secured
-        if(amount <=0){
-            return {
-                success: false,
-                message: "Amount must be greater than zero.",
-            
-            };
-        }
+        // Business logic flaw: no checking of the amount sign, allowing negative transfers which can be exploited to increase balance
         
         // find recipient
         const receiver = await prisma.user.findUnique({
             where: { email: receiverEmail }
         }); 
-
         if(!receiver){
             return{
                 success : false, 
@@ -23,22 +15,27 @@ export class TransactionService {
             }; 
         }
 
-        // find sender and checking balance
-
+        // find sender and check balance
         const sender = await prisma.user.findUnique({
             where: {id : senderId}
         }); 
-
-        if(!sender || sender.balance < amount){
+        if (!sender) return { success: false, message: "Sender not found" };
+        if(sender.balance < amount){
             return{
                 success : false, 
                 message : "Insufficient balance"
             }; 
         }
 
-        // Perform transfer
-        // BUsiness logic flaw : we don't verify if sender.id === receiver.id, allowing self transfer which can be exploited for balance manipulation
+        // Prevent self-transfer
+        if (senderId === receiver.id) {
+            return {
+                success: false,
+                message: "Cannot transfer to self"
+            }
+        }
 
+        // Perform transfer
         await prisma.$transaction([
             prisma.user.update({
                 where: { id: senderId},
@@ -60,8 +57,7 @@ export class TransactionService {
         return { success : true, message : "Transfer successful" };
     }
      
-        // to display the historic
-
+        // Display transaction history
         async getHistory(userId: number) {
             return await prisma.transaction.findMany({
                 where:{

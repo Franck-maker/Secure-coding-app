@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { transactionService } from "@/src/services/transactionService";
 import jwt from "jsonwebtoken";
 
-const WEAK_SECRET = "12345"; // Le même secret que pour le login
+const WEAK_SECRET = "12345"; // Same as login
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     
     // --- AUTHENTICATION CHECK (Vulnerable Implementation) ---
-    // On récupère le token du Header 'Authorization'
+    // Get the "authorization" header and extract the token
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "No token provided" }, { status: 401 });
     }
 
-    // Vérification du token (vulnérable car secret faible)
+    // Token verification (vulnerable due to weak secret)
     const decoded: any = jwt.verify(token, WEAK_SECRET);
     
     // Action

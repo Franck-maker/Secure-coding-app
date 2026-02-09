@@ -18,16 +18,18 @@ A simplified banking application built with Next.js and Prisma.
 
 ## Getting Started
 
+### With Docker Compose
+
 Follow these steps to set up the project via Docker.
 
-### 1. Clone the repository
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Franck-maker/Secure-coding-app.git
 cd Secure-coding-app
 ```
 
-### 2. Run Docker Compose
+#### 2. Run Docker Compose
 
 Optional: Beforehand, set your environment variables with the ".env" file.
 
@@ -37,6 +39,22 @@ docker compose up -d --build
 ```
 
 Wait for a few minutes so that the fullstack application builds and the different containers setup themselves.
+
+### Locally
+
+Run the database and its tool management with Docker Compose.
+```bash
+docker compose up postgres prisma-studio -d
+```
+
+Set the environment variables to .env; you may copy .env.example: `cp .env.example .env`
+
+Install web dependencies, deploy the database migrations and run the fullstack application as develop.
+```bash
+npm ci
+npm run db:deploy
+npm run dev
+```
 
 ## The Application 
 

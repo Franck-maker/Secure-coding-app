@@ -1,7 +1,6 @@
 services:
-  # The Database Service
   postgres:
-    image: postgres:15-alpine
+    image: postgres:18.1-alpine
     container_name: bank_db
     environment:
       POSTGRES_USER: bank_admin
@@ -11,6 +10,60 @@ services:
       - "5440:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: postgres -c listen_addresses='*'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prisma -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bank_network
+  
+  app:
+    build:
+      context: .  
+      dockerfile: Dockerfile.app
+    container_name: bank_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bank_network
+    environment:
+      - DATABASE_URL=postgres://bank_admin:secure_password_123@postgres:5432/bank_db
+    stdin_open: true
+    tty: true  # Keeps the container running for debugging
+    env_file:
+      - .env
+
+  prisma-studio:
+    image: node:lts-alpine3.22
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: npx prisma studio --port 5555 --browser none
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    networks:
+      - prisma-network
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+      server:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgres://bank_admin:secure_password_123@postgres:5432/bank_db
 
 volumes:
   postgres_data:
+
+networks:
+  bank_network:

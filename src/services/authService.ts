@@ -1,10 +1,6 @@
 import { prisma } from "@/src/lib/prisma";
 import jwt from "jsonwebtoken";
-
-// VULNERABILITY: Weak Secret for JWT
-// Dans un vrai projet, ceci doit être une variable d'env complexe (process.env.JWT_SECRET)
-// Ici, on le met en dur et très simple pour qu'il soit "crackable".
-const WEAK_SECRET = "12345";
+import { SECRET } from "@/src/lib/constants";
 
 export class AuthService {
   /**
@@ -73,7 +69,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         isAdmin: user.isAdmin },
-      WEAK_SECRET,
+      SECRET,
       { expiresIn: "1h" }
     );
 

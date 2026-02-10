@@ -1,8 +1,7 @@
 import { userService } from "@/src/services/userService";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-
-const WEAK_SECRET = "12345"; // Same as login
+import { SECRET } from "@/src/lib/constants";
 
 /**
  * Update user profile information (email or settings).
@@ -41,8 +40,8 @@ export async function PUT(req: Request) {
       return NextResponse.json({ message: "Cross-origin request suspected, Sec-Fetch-Site header is not same-origin or same-site." }, { status: 403 })
     }
 
-    // Token verification (vulnerable due to weak secret)
-    const decoded: any = jwt.verify(token, WEAK_SECRET);
+    // Token verification
+    const decoded: any = jwt.verify(token, SECRET);
 
     if (!decoded.userId || typeof decoded.userId !== "number") {
       return NextResponse.json({ message: `${decoded.userId} is not a valid user ID` }, { status: 400 });

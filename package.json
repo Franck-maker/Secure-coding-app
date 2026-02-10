@@ -9,7 +9,7 @@
     "lint": "eslint",
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy && prisma generate"
+    "db:deploy": "prisma migrate deploy && prisma db seed && prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^7.3.0",

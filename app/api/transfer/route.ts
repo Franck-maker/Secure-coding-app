@@ -7,7 +7,7 @@ const WEAK_SECRET = "12345"; // Same as login
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
+
     // --- AUTHENTICATION CHECK (Vulnerable Implementation) ---
     // Get the "authorization" header and extract the token
     const authHeader = req.headers.get("authorization");
@@ -17,12 +17,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "No token provided" }, { status: 401 });
     }
 
+    // Prevent CSRF attacks
+    const secFetchSite = req.headers.get("sec-fetch-site");
+    if (!(secFetchSite === "same-origin" || secFetchSite === "same-site")) {
+      return NextResponse.json({ message: "Cross-origin request suspected, Sec-Fetch-Site header is not same-origin or same-site." }, { status: 403 })
+    }
+
     // Token verification (vulnerable due to weak secret)
     const decoded: any = jwt.verify(token, WEAK_SECRET);
-    
+
     // Action
     const result = await transactionService.transfer(decoded.userId, body.receiverEmail, Number(body.amount));
-    
+
     return NextResponse.json(result);
 
   } catch (error) {

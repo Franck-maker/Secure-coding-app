@@ -35,6 +35,12 @@ export async function PUT(req: Request) {
       return NextResponse.json({ message: "No token provided" }, { status: 401 });
     }
 
+    // Prevent CSRF attacks
+    const secFetchSite = req.headers.get("sec-fetch-site");
+    if (!(secFetchSite === "same-origin" || secFetchSite === "same-site")) {
+      return NextResponse.json({ message: "Cross-origin request suspected, Sec-Fetch-Site header is not same-origin or same-site." }, { status: 403 })
+    }
+
     // Token verification (vulnerable due to weak secret)
     const decoded: any = jwt.verify(token, WEAK_SECRET);
 

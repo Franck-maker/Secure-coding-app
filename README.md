@@ -18,6 +18,8 @@ A simplified banking application built with Next.js and Prisma.
 
 ## Getting Started
 
+Kick start the application with either Docker Compose (production mode) or locally (development mode).
+
 ### With Docker Compose
 
 Follow these steps to set up the project via Docker.
@@ -42,21 +44,34 @@ Wait for a few minutes so that the fullstack application builds and the differen
 
 ### Locally
 
-Run the database and its tool management with Docker Compose.
+Run the database with Docker Compose.
 ```bash
-docker compose up postgres prisma-studio -d
+docker compose up postgres -d
 ```
 
 Set the environment variables to .env; you may copy .env.example: `cp .env.example .env`
 
-Install web dependencies, deploy the database migrations and run the fullstack application as develop.
+Install web dependencies and deploy the database migrations.
 ```bash
 npm ci
 npm run db:deploy
+```
+
+Optionally: run the database tool management with Docker Compose.
+```bash
+docker compose up prisma-studio -d
+``` 
+
+run the fullstack application as develop
+```bash
 npm run dev
 ```
 
 ## The Application 
+
+### Fullstack Application
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ### Database
 
@@ -76,9 +91,6 @@ It consists of two main models:
 
 You can verify the database state using Prisma Studio: http://localhost:5555
 
-### Fullstack Application
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
 ## Vulnerabilities

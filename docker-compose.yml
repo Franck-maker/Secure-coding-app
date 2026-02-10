@@ -39,20 +39,17 @@ services:
       DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5432/bank_db"
     stdin_open: true
     tty: true # Keeps the container running for debugging
-    env_file:
-      - .env
 
   # Database management tool
   prisma-studio:
     image: node:lts-alpine3.22
+    container_name: bank_db_management
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
     command: npx prisma studio --port 5555 --browser none
     ports:
       - "5555:5555"
-    env_file:
-      - .env
     networks:
       - bank_network
     depends_on:

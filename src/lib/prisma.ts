@@ -1,11 +1,12 @@
 // src/lib/prisma.ts
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
+import { PrismaClient } from '@/prisma/generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prismaClientSingleton = () => {
-  // CLEAN CODE: Do not pass 'datasources' manually. 
-  // Prisma automatically reads 'DATABASE_URL' from your .env file.
-  return new PrismaClient();
-};
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL
+});
+export const prismaClientSingleton = () => new PrismaClient({ adapter });
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
 

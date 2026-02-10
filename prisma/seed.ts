@@ -4,9 +4,9 @@ import { SECRET } from '@/src/lib/constants';
 /**
  * Seed the database with 2 users and 1 transaction.
  * Users: [{ email: "test@ema.il", "password": "12345", balance: 1000 }, { email: "admin@ema.il", "password": "12345", balance: 0 }]
- * Transaction: { amount: 100, senderId: 1, receiverId: 2 }
+ * Transaction: { amount: 100, senderId: <first user ID>, receiverId: <second user ID> }
  * 
- * Set admin@ema.il as admin with a separate Prisma query.
+ * Set admin@ema.il as admin.
  */
 
 async function main() {

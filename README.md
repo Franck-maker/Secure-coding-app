@@ -91,6 +91,11 @@ It consists of two main models:
 
 You can verify the database state using Prisma Studio: http://localhost:5555
 
+### Available users
+
+- test@ema.il (password: "12345")
+- admin@ema.il (password: "12345"): is an admin
+
 
 
 ## Vulnerabilities

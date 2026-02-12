@@ -43,12 +43,12 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Snyk IaC (Infrastructure as Code) - Scan specific files
+      # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
         uses: snyk/actions/node@master
         continue-on-error: true
         with:
-          command: iac test Dockerfile.app docker-compose.yml --sarif-file-output=snyk-iac.sarif
+          command: iac test --sarif-file-output=snyk-iac.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

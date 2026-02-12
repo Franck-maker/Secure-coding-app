@@ -25,12 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Snyk Code (SAST)
+      # Snyk Code (SAST) - Scan all projects to ensure detection
       - name: Run Snyk Code for SAST
         uses: snyk/actions/node@master
-        continue-on-error: true # Don't fail the build, just report
+        continue-on-error: true # Keep this so one failed scan doesn't stop others
         with:
-          command: code test --sarif-file-output=snyk-code.sarif
+          command: code test --all-projects --sarif-file-output=snyk-code.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -43,27 +43,30 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Snyk IaC (Infrastructure as Code)
+      # Snyk IaC (Infrastructure as Code) - Exclude node_modules
       - name: Run Snyk IaC
         uses: snyk/actions/node@master
         continue-on-error: true
         with:
-          command: iac test --sarif-file-output=snyk-iac.sarif
+          command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # Upload results to GitHub Security tab
-      - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Snyk Code SARIF
+        if: success() || failure() # Run this step even if the scan fails
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-code.sarif
           
-      - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Snyk Open Source SARIF
+        if: success() || failure()
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-oss.sarif
 
-      - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Snyk IaC SARIF
+        if: success() || failure()
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-iac.sarif

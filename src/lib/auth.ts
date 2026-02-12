@@ -8,6 +8,34 @@ export type AuthedRouteHandler = (
   context: { decoded: DecodedToken, params?: unknown }
 ) => Promise<Response> | Response;
 
+/**
+ * Higher-order function that wraps API route handlers with JWT authentication middleware.
+ * Enforces authentication for restricted endpoints by validating JWT tokens from the Authorization header.
+ * 
+ * @param handler - The API route handler to protect with authentication
+ * @returns An authenticated route handler that validates JWT tokens before executing the wrapped handler
+ * 
+ * @example
+ * ```typescript
+ * export const POST = withAuth(async (request, context) => {
+ *   const { decoded } = context;
+ *   return NextResponse.json({ userId: decoded.id });
+ * });
+ * ```
+ * 
+ * @throws Returns 401 Unauthorized if:
+ *   - No token is provided in the Authorization header
+ *   - Token verification fails
+ *   - Token structure is invalid
+ *   - Token has expired
+ * 
+ * @throws Returns 403 Forbidden if:
+ *   - Sec-Fetch-Site header indicates a cross-origin request (not same-origin or same-site)
+ * 
+ * @security Validates JWT tokens using HS256 algorithm with SECRET key
+ * @security Implements CSRF protection via Sec-Fetch-Site header validation
+ * @security Checks token expiration time
+ */
 export const withAuth = (handler: AuthedRouteHandler) => {
   return async (request: Request, context?: { params?: unknown }) => {
     // --- AUTHENTICATION CHECK (Vulnerable Implementation) ---

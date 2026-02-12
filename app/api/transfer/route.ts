@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const decoded: any = jwt.verify(token, SECRET);
 
     // Action
-    const result = await transactionService.transfer(decoded.userId, body.receiverEmail, Number(body.amount));
+    const result = await transactionService.transfer(decoded.id, body.receiverEmail, Number(body.amount));
 
     return NextResponse.json(result);
 

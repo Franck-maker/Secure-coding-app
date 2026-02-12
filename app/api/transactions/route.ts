@@ -2,21 +2,19 @@ import { NextResponse } from "next/server";
 import { transactionService } from "@/src/services/transactionService";
 import { prisma } from "@/src/lib/prisma";
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
-
-const WEAK_SECRET = "12345";
+import { SECRET } from "@/src/lib/constants";
 
 export async function GET(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const authHeader = req.headers.get("authorization");
+    const token = authHeader?.split(" ")[1];
 
     if (!token) {
       return NextResponse.json({ message: "Not authorized" }, { status: 401 });
     }
 
-    const decoded: any = jwt.verify(token, WEAK_SECRET);
-    const userId = decoded.userId;
+    const decoded: any = jwt.verify(token, SECRET);
+    const userId = decoded.id; // Corrected: key is 'id', not 'userId'
 
     // Retrieve History and Balance
     const transactions = await transactionService.getHistory(userId);

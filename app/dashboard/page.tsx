@@ -26,6 +26,15 @@ export default function Dashboard() {
   const [amount, setAmount] = useState("");
   const [receiver, setReceiver] = useState("");
   const [message, setMessage] = useState("");
+  
+  // Search & Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all"); // all, incoming, outgoing
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  
+  // Profile State
+  const [newEmail, setNewEmail] = useState("");
+  const [profileMessage, setProfileMessage] = useState("");
 
   // 2. ONLY load data inside useEffect (Runs only in browser)
   useEffect(() => {
@@ -43,11 +52,25 @@ export default function Dashboard() {
       
       // Get Real History & Balance from API
       try {
-        const res = await fetch("/api/transactions");
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/transactions", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
         if (res.ok) {
           const data = await res.json();
           setTransactions(data.transactions);
           if (data.balance !== undefined) setBalance(data.balance);
+        }
+
+        // Admin: Fetch Users
+        if (parsedUser.isAdmin) {
+            const resAdmin = await fetch("/api/users", {
+                headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            });
+            if (resAdmin.ok) {
+                setAllUsers(await resAdmin.json());
+            }
         }
       } catch (e) {
         console.error("Failed to load history");
@@ -60,10 +83,14 @@ export default function Dashboard() {
   const handleTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    const token = localStorage.getItem("token");
 
     const res = await fetch("/api/transfer", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json", 
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ receiverEmail: receiver, amount })
     });
 
@@ -75,6 +102,30 @@ export default function Dashboard() {
       setTimeout(() => window.location.reload(), 1000); 
     } else {
       setMessage("❌ Error: " + data.message);
+    }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileMessage("");
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("/api/users/profile", {
+        method: "PUT",
+        headers: { 
+            "Content-Type": "application/json", 
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ email: newEmail })
+    });
+    const data = await res.json();
+    if(res.ok) {
+        setProfileMessage("✅ Updated");
+        // Update local user state
+        setUser({...user, email: newEmail});
+        localStorage.setItem("user", JSON.stringify({...user, email: newEmail}));
+    } else {
+        setProfileMessage("❌ " + (data.message || "Failed"));
     }
   };
 
@@ -159,16 +210,89 @@ export default function Dashboard() {
             </button>
           </form>
         </div>
+
+        {/* Profile Update Card */}
+        <div className="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200 border border-slate-100">
+          <h3 className="text-xl font-bold text-blue-900 mb-6">Profile Settings</h3>
+          <form onSubmit={handleUpdateProfile} className="space-y-5">
+            <div>
+              <label className="text-xs font-bold text-slate-400 uppercase">New Email</label>
+              <input 
+                type="email" 
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-blue-900 outline-none focus:border-rose-500 transition"
+                placeholder="new@email.com"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+              />
+            </div>
+            {profileMessage && (
+              <div className={`p-3 rounded-lg text-sm font-medium ${profileMessage.includes("Error") || profileMessage.includes("❌") ? "bg-rose-50 text-rose-600" : "bg-green-50 text-green-600"}`}>
+                {profileMessage}
+              </div>
+            )}
+            <button type="submit" className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+              Update Email
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* History */}
       <div className="w-full max-w-4xl px-6 mt-8">
-        <h3 className="text-lg font-bold text-blue-900 mb-4">Transaction History</h3>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+            <h3 className="text-lg font-bold text-blue-900">Transaction History</h3>
+            
+            {/* Search & Filters */}
+            <div className="flex gap-2 w-full md:w-auto">
+                <input 
+                    type="text" 
+                    placeholder="Search by email..." 
+                    className="px-4 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-rose-500 w-full md:w-48 text-blue-900"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select 
+                    className="px-4 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-rose-500 bg-white text-blue-900"
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                >
+                    <option value="all">All</option>
+                    <option value="incoming">Incoming (+)</option>
+                    <option value="outgoing">Outgoing (-)</option>
+                </select>
+            </div>
+        </div>
+
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            {transactions.length === 0 ? (
+            {transactions.filter(tx => {
+                // Filter Logic
+                const matchesSearch = 
+                    tx.sender.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                    tx.receiver.email.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                const isIncoming = tx.receiverId === user?.id;
+
+                if (filterType === 'incoming' && !isIncoming) return false;
+                if (filterType === 'outgoing' && isIncoming) return false;
+
+                return matchesSearch;
+            }).length === 0 ? (
                 <div className="p-8 text-center text-slate-400">No transactions found.</div>
             ) : (
-                transactions.map((tx) => {
+                transactions.filter(tx => {
+                     // Same Filter Logic for Mapping (Refactor ideally, but inline for safety)
+                    const matchesSearch = 
+                        tx.sender.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        tx.receiver.email.toLowerCase().includes(searchTerm.toLowerCase());
+                    
+                    const isIncoming = tx.receiverId === user?.id;
+
+                    if (filterType === 'incoming' && !isIncoming) return false;
+                    if (filterType === 'outgoing' && isIncoming) return false;
+
+                    return matchesSearch;
+                }).map((tx) => {
                     const isIncoming = tx.receiverId === user?.id;
                     return (
                         <div key={tx.id} className="flex justify-between items-center p-5 border-b border-slate-50 hover:bg-slate-50 transition">
@@ -194,6 +318,42 @@ export default function Dashboard() {
             )}
         </div>
       </div>
+
+      {/* Admin Panel */}
+      {user?.isAdmin && (
+        <div className="w-full max-w-4xl px-6 mt-8 mb-10">
+          <h3 className="text-lg font-bold text-blue-900 mb-4">Admin Panel - User Management</h3>
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden overflow-x-auto">
+            <table className="w-full text-left text-sm text-blue-900">
+              <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                <tr>
+                  <th className="px-6 py-4">ID</th>
+                  <th className="px-6 py-4">Username</th>
+                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Role</th>
+                  <th className="px-6 py-4">Balance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {allUsers.map((u) => (
+                  <tr key={u.id} className="hover:bg-slate-50 transition">
+                    <td className="px-6 py-4 font-bold">#{u.id}</td>
+                    <td className="px-6 py-4">{u.username || "-"}</td>
+                    <td className="px-6 py-4 font-mono text-xs">{u.email}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${u.isAdmin ? "bg-purple-100 text-purple-600" : "bg-slate-100 text-slate-500"}`}>
+                        {u.isAdmin ? "ADMIN" : "USER"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold">{u.balance.toFixed(2)} €</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -17,10 +17,7 @@ export async function POST(request: Request) {
     const result = await authService.register(body);
 
     // Return the response based on what the service decided
-    return NextResponse.json(
-      { message: result.message, user: result.user },
-      { status: result.status }
-    );
+    return NextResponse.json(result, { status: result.status });
 
   } catch (error) {
     return NextResponse.json(

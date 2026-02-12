@@ -36,7 +36,7 @@ services:
     networks:
       - bank_network
     environment:
-      DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5432/bank_db"
+      DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5440/bank_db"
     stdin_open: true
     tty: true # Keeps the container running for debugging
 
@@ -56,7 +56,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5432/bank_db"
+      DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5440/bank_db"
 
 volumes:
   postgres_data:

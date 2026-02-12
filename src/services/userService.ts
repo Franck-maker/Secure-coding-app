@@ -1,5 +1,4 @@
 
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/src/lib/prisma";
 
 export class UserService {
@@ -49,10 +48,30 @@ export class UserService {
       }
     }
 
-    return await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: targetUserId },
       data: { email },
-    })
+    });
+    
+    return {
+      success: true,
+      user: updatedUser,
+      status: 200
+    };
+  }
+
+  async getAllUsers() {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        isAdmin: true,
+        balance: true,
+        createdAt: true
+      },
+      orderBy: { id: 'asc' }
+    });
   }
 }
 

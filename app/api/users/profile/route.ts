@@ -43,17 +43,18 @@ export async function PUT(req: Request) {
     // Token verification
     const decoded: any = jwt.verify(token, SECRET);
 
-    if (!decoded.userId || typeof decoded.userId !== "number") {
-      return NextResponse.json({ message: `${decoded.userId} is not a valid user ID` }, { status: 400 });
+    if (!decoded.id || typeof decoded.id !== "number") {
+      return NextResponse.json({ message: `${decoded.id} is not a valid user ID` }, { status: 400 });
     }
 
     // Action
-    const result = await userService.updateProfile(decoded.userId, userId ?? undefined, email);
+    const result = await userService.updateProfile(decoded.id, userId ?? undefined, email);
 
-    if (result?.success === false) {
+    if (!result.success) {
       return NextResponse.json({ message: result.message }, { status: result.status });
     }
-    return NextResponse.json(result);
+    
+    return NextResponse.json(result.user);
 
   } catch (error) {
     console.error(`Profile update error: ${error}`);

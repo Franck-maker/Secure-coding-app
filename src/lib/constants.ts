@@ -1,1 +1,2 @@
-export const SECRET: string = process.env.SECRET ?? '';
+export const SECRET: string = process.env.SECRET ?? '12345';
+

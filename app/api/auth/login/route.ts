@@ -1,28 +1,39 @@
 import { NextResponse } from "next/server";
 import { authService } from "@/src/services/authService";
 
-// --- VULNERABILITY: ENCODED PASSWORD EXPOSURE ---
-// The vulnerability is HERE (using GET), passing params via URL.
-export async function GET(request: Request) {
-  
-  // Controller Logic: Parse URL
-  const { searchParams } = new URL(request.url);
-  const email = searchParams.get("email");
-  const password = searchParams.get("password");
+// We use POST for the form, but the vulnerability remains in the logic (weak JWT)
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { email, password } = body;
 
-  if (!email || !password) {
-    return NextResponse.json(
-      { message: "Missing email or password in query parameters" },
-      { status: 400 }
-    );
+    const result = await authService.login(email, password);
+
+    if (!result.success) {
+      return NextResponse.json(result, { status: result.status });
+    }
+
+    // Create the response
+
+    const response = NextResponse.json({
+      success: true, 
+      message: "Login successful",
+      user: result.user}, { status: 200 });
+
+      // --- VULNERABILITY ENABLER ---
+    // We set the token in a COOKIE.
+    // By default, this cookie will be sent with every request to our domain.
+    // We intentionally do NOT set 'SameSite: Strict' to allow the attack later.
+    response.cookies.set({
+      name: "token",
+      value: result.token || "",
+      httpOnly: true, // JavaScript cannot read it (good for XSS, bad for CSRF if no other protection)
+      path: "/",
+      maxAge: 60 * 60, // 1 hour
+    });
+
+    return response;
+  } catch (error) {
+    return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
   }
-
-  // Call the Service
-  const result = await authService.login(email, password);
-
-  // Return Response
-  return NextResponse.json(
-    result,
-    { status: result.status }
-  );
 }

@@ -8,12 +8,12 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // --- AUTHENTICATION CHECK (Vulnerable Implementation) ---
-    // Get the "authorization" header and extract the token
+    // On récupère le token du Header 'Authorization'
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      return NextResponse.json({ message: "No token provided" }, { status: 401 });
+      return NextResponse.json({ message: "No session (cookie) found" }, { status: 401 });
     }
 
     // Prevent CSRF attacks

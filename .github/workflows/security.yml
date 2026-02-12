@@ -1,0 +1,69 @@
+name: "Snyk Security Scan"
+
+on:
+  push:
+    branches: [ "main", "devops" ]
+  pull_request:
+    branches: [ "main", "devops" ]
+
+jobs:
+  snyk:
+    name: Snyk Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Required to upload SARIF results
+      contents: read # Required to checkout the code
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      # Snyk Code (SAST)
+      - name: Run Snyk Code for SAST
+        uses: snyk/actions/node@master
+        continue-on-error: true # Don't fail the build, just report
+        with:
+          command: code test --sarif-file-output=snyk-code.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # Snyk Open Source (SCA)
+      - name: Run Snyk Open Source for SCA
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        with:
+          command: test --sarif-file-output=snyk-oss.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # Snyk IaC (Infrastructure as Code)
+      - name: Run Snyk IaC
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        with:
+          command: iac test --sarif-file-output=snyk-iac.sarif
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # Upload results to GitHub Security tab
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-code.sarif
+          
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-oss.sarif
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-iac.sarif

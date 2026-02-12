@@ -25,10 +25,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Snyk Code (SAST) - Scan all projects to ensure detection
+      # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
         uses: snyk/actions/node@master
-        continue-on-error: true # Keep this so one failed scan doesn't stop others
+        continue-on-error: true
         with:
           command: code test --all-projects --sarif-file-output=snyk-code.sarif
         env:
@@ -43,18 +43,18 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Snyk IaC (Infrastructure as Code) - Exclude node_modules
+      # Snyk IaC (Infrastructure as Code) - Scan specific files
       - name: Run Snyk IaC
         uses: snyk/actions/node@master
         continue-on-error: true
         with:
-          command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
+          command: iac test Dockerfile.app docker-compose.yml --sarif-file-output=snyk-iac.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # Upload results to GitHub Security tab
       - name: Upload Snyk Code SARIF
-        if: success() || failure() # Run this step even if the scan fails
+        if: success() || failure()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-code.sarif

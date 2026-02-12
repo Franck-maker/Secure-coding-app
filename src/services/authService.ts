@@ -2,6 +2,14 @@ import { prisma } from "@/src/lib/prisma";
 import jwt from "jsonwebtoken";
 import { SECRET } from "@/src/lib/constants";
 
+export type DecodedToken = { 
+  id: number,
+  email: string,
+  isAdmin: boolean,
+  iat: number,
+  exp: number
+}
+
 export class AuthService {
   /**
    * Registers a new user.

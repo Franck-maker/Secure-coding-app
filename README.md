@@ -90,3 +90,13 @@ You can verify the database state using Prisma Studio: http://localhost:5555
 
 - test@ema.il (password: "12345")
 - admin@ema.il (password: "12345"): is an admin
+
+## Testing
+
+You may open the Postman collection located in this repository or at this URL: "https://aurege-3536553.postman.co/workspace/Aurege's-Workspace~b53b580e-a765-4283-8e7c-a059a6814dab/collection/52396641-65e88d2a-7a37-49dc-8759-90f31cfbf6ab?action=share&creator=52396641"
+
+Then, with the running Docker containers, right-click the "Integration Tests" collection and select "Run".  
+Now, you should be able to start a collection run with "Run Integration Tests".
+
+After all tests are run, Postman will report the results of that run. 
+

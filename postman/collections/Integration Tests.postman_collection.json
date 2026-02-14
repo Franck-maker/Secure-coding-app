@@ -1,0 +1,1984 @@
+{
+  "info": {
+    "_postman_id": "65e88d2a-7a37-49dc-8759-90f31cfbf6ab",
+    "name": "Integration Tests",
+    "description": "> This collection features end-to-end tests for the (In)Secure Bank App. \n  \n\nTo test this application, run all tests starting with \"\\[Setup\\] Login\".",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Process VALID requests",
+      "item": [
+        {
+          "name": "Require Auth",
+          "item": [
+            {
+              "name": "[Setup] Login",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "7b7e4595-53f5-4deb-bacb-c71dad5861b3",
+                    "exec": [
+                      "// Generate the payload data for the login user request\r",
+                      "\r",
+                      "let payload = {\r",
+                      "    \"email\": pm.collectionVariables.get(\"test_user_email\"),\r",
+                      "    \"password\": pm.collectionVariables.get(\"test_user_password\")\r",
+                      "}\r",
+                      "\r",
+                      "// Store the payload in a runtime-only variable \r",
+                      "pm.variables.set('payload', JSON.stringify(payload));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "3b75cdeb-28d3-4784-9fd0-4ef03d1fa27e",
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Should have a valid JSON format response body\", function () {\r",
+                      "    pm.expect(response).to.not.be.undefined;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Should have the required 'user' object in the response\", function () {\r",
+                      "    pm.expect(response).to.be.an('object');\r",
+                      "    pm.expect(response.user).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Should have the `id` property in the user object and is a non-negative integer\", function () {\r",
+                      "  pm.expect(response.user.id).to.be.a('number').and.to.be.at.least(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Only set the variable if the response is successful \r",
+                      "if (pm.response.code === 200) {\r",
+                      "    pm.collectionVariables.set(\"e2e_user_test_token\", response.token);\r",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "85b88411-68c5-4b6d-94fa-1ad27df4622b",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{payload}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "ba0fbe01-6f3c-450e-86cb-0680246f5375",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{{payload}}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "set-cookie",
+                      "value": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiQ2xheS5Cb3lsZUBlbWEuaWwiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzcxMDkyMDQ2LCJleHAiOjE3NzEwOTU2NDZ9.SeRpDsUFGk7U2JVjKHUBm0hGK5r490IcCMVLzUll0C8; Path=/; Expires=Sat, 14 Feb 2026 19:00:46 GMT; Max-Age=3600; HttpOnly"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 18:00:46 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Login successful\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiQ2xheS5Cb3lsZUBlbWEuaWwiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzcxMDkyMDQ2LCJleHAiOjE3NzEwOTU2NDZ9.SeRpDsUFGk7U2JVjKHUBm0hGK5r490IcCMVLzUll0C8\",\n    \"user\": {\n        \"id\": 11,\n        \"email\": \"Clay.Boyle@ema.il\",\n        \"isAdmin\": false\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Get user transactions",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "8803805c-1ec0-499a-88ec-f4e51e93d0a6",
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "",
+                      "pm.test(\"Should contain an accounts 'array' in the response\", function () {",
+                      "    pm.expect(response.transactions).to.be.an('array');",
+                      "});",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "3d9de95b-cfe1-4dde-a4ba-f7a6cbdf9fb2",
+                    "exec": [
+                      "const token = pm.environment.get(\"e2e_user_test_token\");"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "561eec97-498a-4535-b620-f029f9c5071b",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/transactions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "transactions"
+                  ]
+                },
+                "description": "Get a list of all accounts to ensure the accounts were created and saved correctly."
+              },
+              "response": [
+                {
+                  "id": "642d7f52-bd05-4f35-92e6-3baf0be5938e",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Sec-Fetch-Site",
+                        "value": "same-site",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Authorization",
+                        "value": "${e2e_user_test_token}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": ""
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/transactions",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "transactions"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 18:23:20 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"transactions\": [\n        {\n            \"id\": 1,\n            \"amount\": 100,\n            \"createdAt\": \"2026-02-14T12:50:21.263Z\",\n            \"senderId\": 1,\n            \"receiverId\": 2,\n            \"sender\": {\n                \"email\": \"test@ema.il\"\n            },\n            \"receiver\": {\n                \"email\": \"admin@ema.il\"\n            }\n        }\n    ],\n    \"balance\": 1000\n}"
+                }
+              ]
+            },
+            {
+              "name": "Create a transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "18d43ce3-e333-43c5-8fef-79634cd88fe2",
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "",
+                      "pm.test(\"Should display a successful transaction message\", function () {",
+                      "    pm.expect(response.success).to.be.true;",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "36f42022-534d-4c28-b816-2c35ae1e4404",
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "86c4ca30-f77a-421f-90da-69feeca5c7c4",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"receiverEmail\": \"{{e2e_receiver_email}}\",\n    \"amount\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/transfer",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "transfer"
+                  ]
+                },
+                "description": "Create a new transaction between the `fromAccount` and `toAccount`"
+              },
+              "response": [
+                {
+                  "id": "4e6a7f6f-8d0c-4454-8615-8311425fe502",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"receiverEmail\": \"{{e2e_receiver_email}}\",\n    \"amount\": 1\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/transfer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "transfer"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 18:39:50 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Transfer successful\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update user profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "146bf5db-0211-4dbf-89c4-c03726cc0ea6",
+                    "exec": [
+                      "let response = pm.response.json(),",
+                      "    account_id = parseInt(pm.collectionVariables.get(\"e2e_user_account_id_to\")),",
+                      "    owner = pm.collectionVariables.get(\"e2e_user_name_to\");",
+                      "",
+                      "pm.test(\"The response should be an object\", function () {",
+                      "    pm.expect(response).to.be.an('object');",
+                      "});",
+                      "",
+                      "pm.test(\"Should contain the correct email in the response\", function () {",
+                      "    pm.expect(response.email).to.eql(pm.collectionVariables.get(\"test_user_new_email\"));",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "6f73bf7c-f16c-4e89-a836-9e8008a419ec",
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "44302f1a-f703-4eda-8fe2-efa8510643f5",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"userId\": 1,\r\n    \"email\": \"{{test_user_new_email}}\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "profile"
+                  ]
+                },
+                "description": "Confirm the balance of the `toAccount` matches the expected value after the transaction."
+              },
+              "response": [
+                {
+                  "id": "8615d8dd-b169-4d96-9df8-bad9d9889a30",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"userId\": 1,\r\n    \"email\": \"{{test_user_new_email}}\"\r\n}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users/profile",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users",
+                        "profile"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:00:04 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": 1,\n    \"email\": \"test2@ema.il\",\n    \"password\": \"12345\",\n    \"username\": null,\n    \"isAdmin\": false,\n    \"balance\": 999,\n    \"createdAt\": \"2026-02-14T12:50:21.234Z\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "[Revert] Update user profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "146bf5db-0211-4dbf-89c4-c03726cc0ea6",
+                    "exec": [
+                      "let response = pm.response.json(),",
+                      "    account_id = parseInt(pm.collectionVariables.get(\"e2e_user_account_id_to\")),",
+                      "    owner = pm.collectionVariables.get(\"e2e_user_name_to\");",
+                      "",
+                      "pm.test(\"The response should be an object\", function () {",
+                      "    pm.expect(response).to.be.an('object');",
+                      "});",
+                      "",
+                      "pm.test(\"Should contain the correct email in the response\", function () {",
+                      "    pm.expect(response.email).to.eql(pm.collectionVariables.get(\"test_user_email\"));",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "6f73bf7c-f16c-4e89-a836-9e8008a419ec",
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "8be89cd9-7e07-4e70-8950-e4057f0f60ed",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"userId\": 1,\r\n    \"email\": \"{{test_user_email}}\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "profile"
+                  ]
+                },
+                "description": "Confirm the balance of the `toAccount` matches the expected value after the transaction."
+              },
+              "response": [
+                {
+                  "id": "d93e2e5b-1daa-4041-a1a5-7a06f8c0014c",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"userId\": 1,\r\n    \"email\": \"{{test_user_email}}\"\r\n}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users/profile",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users",
+                        "profile"
+                      ]
+                    }
+                  },
+                  "_postman_previewlanguage": "Text",
+                  "header": null,
+                  "cookie": [],
+                  "body": null
+                }
+              ]
+            }
+          ],
+          "id": "b5dac8c4-26ac-46f5-9c9d-2cdaf1228082",
+          "description": "This folder lists all sensible endpoints restricted by authentication.",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "848b5cd0-d4c3-405f-9fdd-4d76c5df1b8e",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "// set Sec-Fetch-Site header value to \"same-site\"\r",
+                  "pm.request.headers.upsert({ key: \"Sec-Fetch-Site\", value: \"same-site\" });\r",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "c1017721-29bd-4990-b73e-5015edef6fe2",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "aecbb7cd-2ab1-4bc2-a65e-c742c209d5fa",
+                "exec": [
+                  "let response = pm.response.json();",
+                  "",
+                  "pm.test(\"Should return a object\", function () {",
+                  "    pm.expect(response, 'The response is not an object').to.be.an('object');",
+                  "});",
+                  "",
+                  "// Only set the variable if the response is successful ",
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set('apiKey', response.apiKey);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "4024f75f-cb50-486c-8ca4-bffcd51fe004",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "8f370a0d-c726-47f2-b43e-114384ad5213",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": "Health"
+          },
+          "response": [
+            {
+              "id": "9aeaff5e-76bd-4433-ae61-7fe2ee67f694",
+              "name": "Successful",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/health",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sat, 14 Feb 2026 18:40:52 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"OK\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "cd9b35d0-4306-426a-8de1-db2cd1049526",
+                "exec": [
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Should have a valid JSON format response body\", function () {",
+                  "    pm.expect(response).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test(\"Should have the required 'user' object in the response\", function () {",
+                  "    pm.expect(response).to.be.an('object');",
+                  "    pm.expect(response.user).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Should have the `id` property in the user object and is a non-negative integer\", function () {",
+                  "  pm.expect(response.user.id).to.be.a('number').and.to.be.at.least(0);",
+                  "});",
+                  "",
+                  "// Only set the variable if the response is successful ",
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"e2e_user_email\", response.user.email)",
+                  "    pm.collectionVariables.set(\"e2e_user_id\", response.user.id)",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "dbfa0370-92e5-40c4-ab39-a047dc4b7986",
+                "exec": [
+                  "// Generate the payload data for the create user request",
+                  "",
+                  "let fullName = `${pm.variables.replaceIn(\"{{$randomFirstName}}\")}.${pm.variables.replaceIn(\"{{$randomLastName}}\")}`;",
+                  "",
+                  "let payload = {",
+                  "    \"email\": `${fullName}@ema.il`,",
+                  "    \"password\": pm.collectionVariables.get(\"password\"),",
+                  "}",
+                  "",
+                  "// Store the payload in a runtime-only variable ",
+                  "pm.variables.set('payload', JSON.stringify(payload));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "aa460f6d-2436-4723-a3e9-113c55cd63ec",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{{payload}}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Generates a new account (`fromAccount`), that the funds will be transferred from, and saves the following information if the request is successful:\n\n- Account owner from the request body (saved as collection variable `e2e_user_name_from`)\n- Account id from the response body (saved as collection variable `e2e_user_account_id_from`)"
+          },
+          "response": [
+            {
+              "id": "bfd018f5-2827-4450-8406-8c64ee0c3494",
+              "name": "Successful",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{payload}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sat, 14 Feb 2026 17:53:32 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"message\": \"User created successfully\",\n    \"user\": {\n        \"id\": 10,\n        \"email\": \"Dedric.Lindgren@ema.il\",\n        \"password\": \"12345\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 100,\n        \"createdAt\": \"2026-02-14T17:53:32.246Z\"\n    },\n    \"status\": 201\n}"
+            }
+          ]
+        }
+      ],
+      "id": "1b13a968-1826-4863-8949-f21547f36d0c",
+      "description": "This folder tests a normal workflow of registering a user and logging to the application, updating the user profile and making transactions.\n\nBecause we expect all requests to succeed in this workflow, we have a **status check test** in the **folder-level Scripts tab**.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "793583fb-02ed-486d-b011-15552d04a278",
+            "type": "text/javascript",
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "c88b75e7-4a97-4687-95e7-90e6776fcf56",
+            "type": "text/javascript",
+            "requests": {},
+            "exec": [
+              "// all requests in this folder should be valid",
+              "// check if status is 200 or 201",
+              "pm.test(\"Folder-level status check\", function () {",
+              "    pm.expect(pm.response.code, 'Status code is 200 or 201').to.be.oneOf([200, 201]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attempt INVALID requests",
+      "item": [
+        {
+          "name": "Require Auth",
+          "item": [
+            {
+              "name": "[Setup] Login",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "7b7e4595-53f5-4deb-bacb-c71dad5861b3",
+                    "exec": [
+                      "// Generate the payload data for the login user request\r",
+                      "\r",
+                      "let payload = {\r",
+                      "    \"email\": pm.collectionVariables.get(\"test_user_email\"),\r",
+                      "    \"password\": pm.collectionVariables.get(\"test_user_password\")\r",
+                      "}\r",
+                      "\r",
+                      "// Store the payload in a runtime-only variable \r",
+                      "pm.variables.set('payload', JSON.stringify(payload));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "3b75cdeb-28d3-4784-9fd0-4ef03d1fa27e",
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "pm.test(\"Should have a valid JSON format response body\", function () {\r",
+                      "    pm.expect(response).to.not.be.undefined;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Should have the required 'user' object in the response\", function () {\r",
+                      "    pm.expect(response).to.be.an('object');\r",
+                      "    pm.expect(response.user).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Should have the `id` property in the user object and is a non-negative integer\", function () {\r",
+                      "  pm.expect(response.user.id).to.be.a('number').and.to.be.at.least(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Only set the variable if the response is successful \r",
+                      "if (pm.response.code === 200) {\r",
+                      "    pm.collectionVariables.set(\"e2e_user_test_token\", response.token);\r",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "63e2e656-c466-411d-b961-90150bd4fb5b",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{payload}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "0ae4eeb3-78b7-4785-9c06-1ac2e91e6cd9",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{{payload}}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "set-cookie",
+                      "value": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiQ2xheS5Cb3lsZUBlbWEuaWwiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzcxMDkyMDQ2LCJleHAiOjE3NzEwOTU2NDZ9.SeRpDsUFGk7U2JVjKHUBm0hGK5r490IcCMVLzUll0C8; Path=/; Expires=Sat, 14 Feb 2026 19:00:46 GMT; Max-Age=3600; HttpOnly"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 18:00:46 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Login successful\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoiQ2xheS5Cb3lsZUBlbWEuaWwiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzcxMDkyMDQ2LCJleHAiOjE3NzEwOTU2NDZ9.SeRpDsUFGk7U2JVjKHUBm0hGK5r490IcCMVLzUll0C8\",\n    \"user\": {\n        \"id\": 11,\n        \"email\": \"Clay.Boyle@ema.il\",\n        \"isAdmin\": false\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Get all users",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "b8f26f9a-18db-4599-9d48-0636adc7bfd4",
+                    "exec": [
+                      "pm.test(\"Status check\", function () {\r",
+                      "    pm.expect(pm.response.code, 'Status code is 400 or 403').to.be.oneOf([401, 403]);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "59ab4102-13db-4743-8c3a-1159cf891bb4",
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "d1559de4-585a-44e5-a95a-986522f8bffe",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "id": "bdd77abd-d07d-4aa9-9021-d57f12663487",
+                  "name": "Successful",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:14:21 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"Forbidden: Admins only\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Insecure secret",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "b8f26f9a-18db-4599-9d48-0636adc7bfd4",
+                    "exec": [
+                      "pm.test(\"Status check\", function () {\r",
+                      "    pm.expect(pm.response.code, 'Status code is 200 or 201').to.be.oneOf([401, 403]);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "f062c70d-d024-4196-8372-c9733e110569",
+              "request": {
+                "auth": {
+                  "type": "jwt",
+                  "jwt": [
+                    {
+                      "key": "secret",
+                      "value": "12345",
+                      "type": "string"
+                    },
+                    {
+                      "key": "payload",
+                      "value": "{\r\n  \"id\": 1,\r\n  \"email\": \"test@ema.il\",\r\n  \"isAdmin\": true,\r\n  \"iat\": 1771092971,\r\n  \"exp\": 2771096571\r\n}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "algorithm",
+                      "value": "HS256",
+                      "type": "string"
+                    },
+                    {
+                      "key": "isSecretBase64Encoded",
+                      "value": false,
+                      "type": "boolean"
+                    },
+                    {
+                      "key": "addTokenTo",
+                      "value": "header",
+                      "type": "string"
+                    },
+                    {
+                      "key": "headerPrefix",
+                      "value": "Bearer",
+                      "type": "string"
+                    },
+                    {
+                      "key": "queryParamKey",
+                      "value": "token",
+                      "type": "string"
+                    },
+                    {
+                      "key": "header",
+                      "value": "{}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/users",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                },
+                "description": "Bypass admin restrictions of an endpoint by resigning a tampered JWT with the insecure default secret \"12345\"."
+              },
+              "response": [
+                {
+                  "id": "ccff63a3-dba2-41fb-9414-b4aa344bd99a",
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:25:56 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"Invalid token\"\n}"
+                },
+                {
+                  "id": "5b29ce10-c60e-43c7-93a9-7956fad5ba0e",
+                  "name": "Vulnerable",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:21:19 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "[\n    {\n        \"id\": 1,\n        \"email\": \"test@ema.il\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 999,\n        \"createdAt\": \"2026-02-14T12:50:21.234Z\"\n    },\n    {\n        \"id\": 2,\n        \"email\": \"admin@ema.il\",\n        \"username\": null,\n        \"isAdmin\": true,\n        \"balance\": 1,\n        \"createdAt\": \"2026-02-14T12:50:21.234Z\"\n    },\n    {\n        \"id\": 8,\n        \"email\": \"Nora.Bernhard@ema.il\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 100,\n        \"createdAt\": \"2026-02-14T17:49:56.737Z\"\n    },\n    {\n        \"id\": 9,\n        \"email\": \"Ryan.Connelly@ema.il\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 100,\n        \"createdAt\": \"2026-02-14T17:51:17.727Z\"\n    },\n    {\n        \"id\": 10,\n        \"email\": \"Dedric.Lindgren@ema.il\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 100,\n        \"createdAt\": \"2026-02-14T17:53:32.246Z\"\n    },\n    {\n        \"id\": 11,\n        \"email\": \"Clay.Boyle@ema.il\",\n        \"username\": null,\n        \"isAdmin\": false,\n        \"balance\": 100,\n        \"createdAt\": \"2026-02-14T17:59:37.400Z\"\n    }\n]"
+                }
+              ]
+            },
+            {
+              "name": "Cannot update other users' profile",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "d3900b59-610a-4a41-a1d8-33d243d3ed21",
+                    "exec": [
+                      "pm.test(\"Status check\", function () {\r",
+                      "    pm.expect(pm.response.code, 'Status code is 403').to.eq(403);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "8e5030c7-6966-43a4-b273-615bd27b5728",
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "id": "3e71c200-bdb3-4a6e-afc3-ef0efe599615",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    // \"something\": ( () => {context.decoded.id = 1} )(),\r\n    \"userId\": 2,\r\n    \"email\": \"{{test_user_email}}\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "profile"
+                  ]
+                },
+                "description": "A normal user cannot update the profile of other users; only admins can."
+              },
+              "response": [
+                {
+                  "id": "672fd564-a2ee-4cd0-ac16-05ec5e5da37b",
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"userId\": 2,\r\n    \"email\": \"{{test_user_email}}\"\r\n}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users/profile",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users",
+                        "profile"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:22:01 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"User 1 is not authorized to update user 2's profile\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Insecure deserialization",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "0bf668bf-ce53-499a-bedc-7e859f7501a6",
+                    "exec": [
+                      "pm.test(\"Status check\", function () {\r",
+                      "    pm.expect(pm.response.code, 'Status code is 400').to.eq(400);\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "10f91750-cb67-4600-8da5-b66cc2805414",
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "id": "1d188ab0-1bfd-486d-87eb-66bc4cf4bdca",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"something\": ( () => {context.decoded.id = 2} )(),\r\n    \"userId\": 2,\r\n    \"email\": \"{{e2e_receiver_email}}\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "profile"
+                  ]
+                },
+                "description": "Bypass being restricted from updating the profile of other users by abusing the insecure deseralization, to which the endpoint is vulnerable. Here, we override the requester user id to an id's admin."
+              },
+              "response": [
+                {
+                  "id": "505b3ec1-2a05-43ea-9213-f1cdcbf66ee2",
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"something\": ( () => {context.decoded.id = 2} )(),\r\n    \"userId\": 2,\r\n    \"email\": \"{{e2e_receiver_email}}\"\r\n}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users/profile",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users",
+                        "profile"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:38:27 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"Invalid JSON format\"\n}"
+                },
+                {
+                  "id": "7b4bf977-84e1-4baa-9af7-8241dbbedb5a",
+                  "name": "Vulnerable",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"something\": ( () => {context.decoded.id = 2} )(),\r\n    \"userId\": 2,\r\n    \"email\": \"{{e2e_receiver_email}}\"\r\n}"
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/users/profile",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "users",
+                        "profile"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:30:19 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": 2,\n    \"email\": \"admin@ema.il\",\n    \"password\": \"12345\",\n    \"username\": null,\n    \"isAdmin\": true,\n    \"balance\": 1,\n    \"createdAt\": \"2026-02-14T12:50:21.234Z\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Cannot create negative transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "18d43ce3-e333-43c5-8fef-79634cd88fe2",
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "",
+                      "pm.test(\"Status check\", function () {",
+                      "    pm.expect(pm.response.code, 'Status code is 400').to.eq(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "36f42022-534d-4c28-b816-2c35ae1e4404",
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "2d99682b-b14f-4474-a7ba-a3d90e66ea9c",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"receiverEmail\": \"{{e2e_receiver_email}}\",\n    \"amount\": -1000000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/transfer",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "transfer"
+                  ]
+                },
+                "description": "Abuse a business logic flaw in the transfer process, which allows users to input negative amounts."
+              },
+              "response": [
+                {
+                  "id": "da46e362-6e68-4942-a4d9-2ca155976830",
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"receiverEmail\": \"{{e2e_receiver_email}}\",\n    \"amount\": -1000000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/transfer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "transfer"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:41:04 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": false,\n    \"message\": `Amount -1000000 must be greater than zero`,\n}"
+                },
+                {
+                  "id": "f2737bf6-ad15-4c04-9344-f9f756b5e511",
+                  "name": "Vulnerable",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"receiverEmail\": \"{{e2e_receiver_email}}\",\n    \"amount\": -1000000\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/transfer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "transfer"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "vary",
+                      "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Sat, 14 Feb 2026 19:40:34 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Transfer successful\"\n}"
+                }
+              ]
+            }
+          ],
+          "id": "d5f23c6f-f167-4eaa-af99-1fa949c9c81c",
+          "description": "This folder lists all sensible endpoints restricted by authentication.",
+          "auth": {
+            "type": "bearer",
+            "bearer": [
+              {
+                "key": "token",
+                "value": "{{e2e_user_test_token}}",
+                "type": "string"
+              }
+            ]
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "739b1f53-8721-429e-83ff-777a5cf8bc05",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "// set Sec-Fetch-Site header value to \"same-site\"\r",
+                  "pm.request.headers.upsert({ key: \"Sec-Fetch-Site\", value: \"same-site\" });\r",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "54608454-a846-41bd-b3c9-ccc2d2cc6efa",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "id": "e787bfd3-2099-4817-b675-82c5ddb90b91",
+      "description": "Note that because we are expecting most of the requests in this folder to be invalid, we are moving the status check from the folder level (as we did in the previous folder) to the request level."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{e2e_user_test_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "287b3441-0504-4457-b422-ba8826e0e73c",
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "id": "cf3deac6-2abb-4a1a-a9b6-b717acbea3cc",
+      "key": "password",
+      "value": "tgv3Cehs56x@mt!6DkgR"
+    },
+    {
+      "id": "cd0a3c86-a97d-410c-b628-5dd7aa3806e4",
+      "key": "e2e_user_email",
+      "value": ""
+    },
+    {
+      "id": "10b6479e-c75c-408b-94bd-925653bc069d",
+      "key": "e2e_user_password",
+      "value": ""
+    },
+    {
+      "id": "bf4f6fd2-c571-48b7-8cc8-f7ddacdaa538",
+      "key": "e2e_user_id",
+      "value": ""
+    },
+    {
+      "id": "bd6b9950-cc5a-4837-ac23-b13907d90fde",
+      "key": "e2e_user_test_token",
+      "value": ""
+    },
+    {
+      "id": "962b63fa-96e5-4dac-afea-47ee09fdd4af",
+      "key": "e2e_receiver_email",
+      "value": "admin@ema.il"
+    },
+    {
+      "id": "f28d890f-f0b3-403d-803b-bb3bade9f0da",
+      "key": "test_user_email",
+      "value": "test@ema.il"
+    },
+    {
+      "id": "812633b3-c3ca-4a7b-826d-2ec2099c40ec",
+      "key": "test_user_password",
+      "value": "12345"
+    },
+    {
+      "id": "9bcb08c5-eda3-49ee-b402-c50a3dae5c89",
+      "key": "test_user_new_email",
+      "value": "test2@ema.il"
+    },
+    {
+      "id": "16f1d6f3-2430-422b-9cb1-e4bb6665d5ff",
+      "key": "apiKey",
+      "value": ""
+    }
+  ]
+}

@@ -10,6 +10,7 @@ on:
 
 jobs:
   snyk:
+    # SAST, SCA, and IaC scans using Snyk
     name: Snyk Scan
     runs-on: ubuntu-latest
     permissions:
@@ -67,6 +68,7 @@ jobs:
           category: "snyk"
 
   gitleaks:
+    # Secret scanning using Gitleaks
     name: gitleaks
     runs-on: ubuntu-latest
     steps:
@@ -79,6 +81,7 @@ jobs:
         if: always() 
 
   codeql:
+    # SAST scan using CodeQL
     name: Analyze (${{ matrix.language }}) with CodeQL
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
@@ -157,6 +160,7 @@ jobs:
         category: "/language:${{matrix.language}}"
 
   zap:
+    # DAST scan using OWASP ZAP
     name: ZAP Full Scan
     runs-on: ubuntu-latest
     steps:

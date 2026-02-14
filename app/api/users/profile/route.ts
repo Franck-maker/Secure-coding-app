@@ -12,15 +12,17 @@ import { withAuth } from "@/src/lib/auth";
  * @return JSON response with success status and new user data
  * 
  * Vulnerabilities: 
- * - No authentication check (anyone can update any profile)
  * - Insecure deserialization 
  */
-export const PUT = withAuth(async (req: Request, context) => {
+const PutHandler = async (req: Request, context: {
+  params?: unknown,
+  decoded: { id: number, email: string, isAdmin: boolean }
+}) => {
   try {
     // Insecure Deserialization vulnerability
     // Extremely dangerous, as it allows, for example, to shutdown the server: 
     // req.body = `{"something": ( () => process.exit(1) )() }`
-    const body = eval(`[${(await req.text())}]`)[0]; 
+    const body = eval(`[${(await req.text())}]`)[0];
     const { userId, email } = body;
 
     // Action
@@ -29,11 +31,13 @@ export const PUT = withAuth(async (req: Request, context) => {
     if (!result.success) {
       return NextResponse.json({ message: result.message }, { status: result.status });
     }
-    
+
     return NextResponse.json(result.user);
 
   } catch (error) {
     console.error(`Profile update error: ${error}`);
     return NextResponse.json({ message: "Profile update failed", error }, { status: 500 });
   }
-})
+}
+
+export const PUT = withAuth(PutHandler);

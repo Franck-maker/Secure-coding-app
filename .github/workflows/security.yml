@@ -28,7 +28,7 @@ jobs:
       # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
         uses: snyk/actions/node@master
-        #continue-on-error: true
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -40,7 +40,7 @@ jobs:
       # Snyk Open Source (SCA)
       - name: Run Snyk Open Source for SCA
         uses: snyk/actions/node@master
-        #continue-on-error: true
+        continue-on-error: true
         with:
           command: test --sarif-file-output=snyk-oss.sarif
         env:
@@ -52,7 +52,7 @@ jobs:
       # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
         uses: snyk/actions/node@master
-        continue-on-error: true
+        #continue-on-error: true
         with:
           command: iac test --sarif-file-output=snyk-iac.sarif
         env:

@@ -30,7 +30,7 @@ export class TransactionService {
         const sender = await prisma.user.findUnique({
             where: {id : senderId}
         }); 
-        if (!sender) return { success: false, message: "Sender not found" };
+        if (!sender) return { success: false, message: "Sender not found", status: 404 };
         if(sender.balance < amount){
             return{
                 success : false, 

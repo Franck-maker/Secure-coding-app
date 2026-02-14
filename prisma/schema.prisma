@@ -22,9 +22,6 @@ model User {
   balance   Float    @default(0.0)
   createdAt DateTime @default(now())
 
-  // For "Prototype Pollution", we might store loose JSON settings
-  settings  Json?    
-
   sentTransfers     Transaction[] @relation("Sender")
   receivedTransfers Transaction[] @relation("Receiver")
 }

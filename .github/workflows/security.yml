@@ -10,6 +10,7 @@ on:
 
 jobs:
   snyk:
+    # SAST, SCA, and IaC scans using Snyk
     name: Snyk Scan
     runs-on: ubuntu-latest
     permissions:
@@ -18,14 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
 
       # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
@@ -53,26 +46,29 @@ jobs:
 
       # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
-        uses: snyk/actions/node@master
+        uses: snyk/actions/iac@master
         continue-on-error: true
-        with:
-          command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Verify Snyk IaC Output
+      
+      # Rename "snyk.sarif" to "snyk-iac.sarif" for consistency
+      - name: Verify and Rename Snyk IaC SARIF file
         run: |
-          if [ -f snyk-iac.sarif ]; then
-            ls -l snyk-iac.sarif
+          if [ -f snyk.sarif ]; then
+            mv snyk.sarif snyk-iac.sarif
           else
-            echo "⚠️ No IaC (Terraform/K8s) found, so no report generated."
+            echo "No IaC (Terraform/K8s) found, so no report generated."
           fi
+
       # Upload
       - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: '.'
+          sarif_file: './'
+          category: "snyk"
+
   gitleaks:
+    # Secret scanning using Gitleaks
     name: gitleaks
     runs-on: ubuntu-latest
     steps:
@@ -83,10 +79,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always() 
-        with:
-          sarif_file: .
 
   codeql:
+    # SAST scan using CodeQL
     name: Analyze (${{ matrix.language }}) with CodeQL
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
@@ -163,3 +158,34 @@ jobs:
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{matrix.language}}"
+
+  zap:
+    # DAST scan using OWASP ZAP
+    name: ZAP Full Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Docker Compose
+        uses: hoverkraft-tech/compose-action@v2.5.0
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          # Target URL
+          target: "http://localhost:3000"
+          # Relative path of the ZAP configuration file
+          # rules_file_name: # optional
+          # The Docker file to be executed
+          docker_name: ghcr.io/zaproxy/zaproxy:stable
+          # Additional command line options
+          cmd_options: # optional
+          # The title for the GitHub issue to be created
+          issue_title: "ZAP Full Scan Report"
+          # The action status will be set to fail if ZAP identifies any alerts during the full scan
+          fail_action: false
+          # Whether Github issues should be created or not
+          allow_issue_writing: false
+          # The name of the artifact that contains the ZAP reports
+          artifact_name: "zap_scan"

@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "generate": "prisma generate",
-    "migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy && prisma db seed && prisma generate"
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy && prisma db seed",
+    "db:deploy": "npm run migrate:deploy && prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^7.3.0",

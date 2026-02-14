@@ -48,7 +48,7 @@ jobs:
         uses: snyk/actions/node@master
         continue-on-error: true
         with:
-          command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
+          command: iac test . --sarif-file-output=snyk-iac.sarif --exclude=node_modules
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -180,11 +180,11 @@ jobs:
           # The title for the GitHub issue to be created
           issue_title: # optional, default is ZAP Full Scan Report
           # The action status will be set to fail if ZAP identifies any alerts during the full scan
-          fail_action: # optional
+          fail_action: false
           # Whether Github issues should be created or not
           allow_issue_writing: false
           # The name of the artifact that contains the ZAP reports
-          artifact_name: # optional, default is zap_scan
+          artifact_name: zap_scan
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v4

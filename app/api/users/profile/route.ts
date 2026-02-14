@@ -19,7 +19,7 @@ const PutHandler = async (req: Request, context: {
   decoded: { id: number, email: string, isAdmin: boolean }
 }) => {
   try {
-    // Insecure Deserialization vulnerability
+    // FIXME: Insecure Deserialization vulnerability
     // Extremely dangerous, as it allows, for example, to shutdown the server: 
     // req.body = `{"something": ( () => process.exit(1) )() }`
     const body = eval(`[${(await req.text())}]`)[0];
@@ -35,6 +35,10 @@ const PutHandler = async (req: Request, context: {
     return NextResponse.json(result.user);
 
   } catch (error) {
+    if (error instanceof SyntaxError) {
+      console.error(`JSON parsing error: ${error}`);
+      return NextResponse.json({ message: "Invalid JSON format" }, { status: 400 });
+    }
     console.error(`Profile update error: ${error}`);
     return NextResponse.json({ message: "Profile update failed", error }, { status: 500 });
   }

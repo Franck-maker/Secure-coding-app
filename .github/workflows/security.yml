@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
@@ -65,9 +65,11 @@ jobs:
           else
             echo "⚠️ No IaC (Terraform/K8s) found, so no report generated."
           fi
-      # Upload (CodeQL gère automatiquement si un fichier manque tant qu'il y en a d'autres)
+      # Upload
       - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: '.'
   gitleaks:
     name: gitleaks
     runs-on: ubuntu-latest

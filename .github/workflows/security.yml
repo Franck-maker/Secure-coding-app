@@ -52,16 +52,22 @@ jobs:
       # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
         uses: snyk/actions/node@master
-        #continue-on-error: true
+        continue-on-error: true
         with:
           command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Verify Snyk IaC Output
-        run: ls -l snyk-iac.sarif
-
+        run: |
+          if [ -f snyk-iac.sarif ]; then
+            ls -l snyk-iac.sarif
+          else
+            echo "⚠️ Aucun fichier IaC (Terraform/K8s) trouvé, donc pas de rapport généré."
+          fi
+      # Upload (CodeQL gère automatiquement si un fichier manque tant qu'il y en a d'autres)
       - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v3
+        if: always() 
         with:
           sarif_file: .

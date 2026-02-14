@@ -1908,6 +1908,113 @@
               }
             }
           ]
+        },
+        {
+          "name": "User enumeration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "4d303af3-bd0d-4039-bfe0-63971d6fadc8",
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Do not tell the user is not registered\", function () {\r",
+                  "    pm.expect(pm.response.code, 'Status code is 401').to.eq(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "9e8cf2e4-7396-4d60-9168-5fac5bfebe89",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"something@email.com\",\r\n    \"password\": \"123456\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1bdf792d-1cb3-4c62-bd4a-6c453c1e67a9",
+              "name": "Vulnerable",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"something@email.com\",\r\n    \"password\": \"123456\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sat, 14 Feb 2026 22:31:20 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"message\": \"User is not registered\",\n    \"status\": 404\n}"
+            }
+          ]
         }
       ],
       "id": "e787bfd3-2099-4817-b675-82c5ddb90b91",
@@ -1926,57 +2033,57 @@
   },
   "variable": [
     {
-      "id": "287b3441-0504-4457-b422-ba8826e0e73c",
+      "id": "104cbaa9-f678-4962-83cd-45f7e385a996",
       "key": "baseUrl",
       "value": "http://localhost:3000"
     },
     {
-      "id": "cf3deac6-2abb-4a1a-a9b6-b717acbea3cc",
+      "id": "5d5d932a-3fc1-4236-a50d-f4b83b96d73a",
       "key": "password",
       "value": "tgv3Cehs56x@mt!6DkgR"
     },
     {
-      "id": "cd0a3c86-a97d-410c-b628-5dd7aa3806e4",
+      "id": "1419aed1-35aa-49f0-9f5f-8bca48d62510",
       "key": "e2e_user_email",
       "value": ""
     },
     {
-      "id": "10b6479e-c75c-408b-94bd-925653bc069d",
+      "id": "0a47e574-0e1e-4022-acd6-8f1566147518",
       "key": "e2e_user_password",
       "value": ""
     },
     {
-      "id": "bf4f6fd2-c571-48b7-8cc8-f7ddacdaa538",
+      "id": "1c296bca-0f04-4512-886e-a66c8739ab55",
       "key": "e2e_user_id",
       "value": ""
     },
     {
-      "id": "bd6b9950-cc5a-4837-ac23-b13907d90fde",
+      "id": "004b1e99-2f19-4f02-9554-0b3b82aba993",
       "key": "e2e_user_test_token",
       "value": ""
     },
     {
-      "id": "962b63fa-96e5-4dac-afea-47ee09fdd4af",
+      "id": "92b639c6-72bc-47f8-ba54-575b4adfd73f",
       "key": "e2e_receiver_email",
       "value": "admin@ema.il"
     },
     {
-      "id": "f28d890f-f0b3-403d-803b-bb3bade9f0da",
+      "id": "22aeed5a-38ae-435e-ad20-60af0e0a458a",
       "key": "test_user_email",
       "value": "test@ema.il"
     },
     {
-      "id": "812633b3-c3ca-4a7b-826d-2ec2099c40ec",
+      "id": "5dc0c095-5345-4ebd-ac15-e382b7207a8c",
       "key": "test_user_password",
       "value": "12345"
     },
     {
-      "id": "9bcb08c5-eda3-49ee-b402-c50a3dae5c89",
+      "id": "0c99106d-0c75-4970-87e5-987707863088",
       "key": "test_user_new_email",
       "value": "test2@ema.il"
     },
     {
-      "id": "16f1d6f3-2430-422b-9cb1-e4bb6665d5ff",
+      "id": "932b6c0d-eed7-4f3b-b834-2e83e72b39c5",
       "key": "apiKey",
       "value": ""
     }

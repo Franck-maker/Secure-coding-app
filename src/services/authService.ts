@@ -13,7 +13,6 @@ export type DecodedToken = {
 export class AuthService {
   /**
    * Registers a new user.
-   * VULNERABILITY: User Enumeration preserved here.
    */
   async register(data: any) {
     const { email, password, username } = data;
@@ -24,7 +23,6 @@ export class AuthService {
     });
 
     if (existingUser) {
-      // VULNERABILITY logic is kept in the service
       return { 
         success: false, 
         message: "This email is already registered.", 
@@ -59,11 +57,20 @@ export class AuthService {
       where: { email },
     });
 
+    // FIXME: User enumeration vulnerability
+    if (user === null) {
+      return {
+        success: false,
+        message: "User is not registered",
+        status: 404
+      }
+    }
+
     // Check password (Plain text comparison)
-    if (!user || user.password !== password) {
+    if (user.password !== password) {
       return { 
         success: false, 
-        message: "Invalid credentials", 
+        message: "Password is incorrect", 
         status: 401 
       };
     }

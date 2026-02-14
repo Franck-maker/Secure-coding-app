@@ -3,13 +3,12 @@ import { NextResponse } from "next/server";
 import { withAuth } from "@/src/lib/auth";
 
 /**
- * Update user profile information (email or settings).
+ * Update user profile information (email).
  * 
  * @param req
  * @param req.body - JSON object
  * @param req.body.userId - Current user ID
  * @param req.body.email - New email address
- * @param req.body.settings - New settings (JSON object)
  * @return JSON response with success status and new user data
  * 
  * Vulnerabilities: 

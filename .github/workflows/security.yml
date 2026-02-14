@@ -45,21 +45,20 @@ jobs:
 
       # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
-        uses: snyk/actions/node@master
+        uses: snyk/actions/iac@master
         continue-on-error: true
-        with:
-          # Scan all supported IaC files in GitHub workdir 
-          command: iac test ${{ github.workspace }} --sarif-file-output=snyk-iac.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Verify Snyk IaC Output
+      
+      # Rename "snyk.sarif" to "snyk-iac.sarif" for consistency
+      - name: Verify and Rename Snyk IaC SARIF file
         run: |
-          if [ -f snyk-iac.sarif ]; then
-            ls -l snyk-iac.sarif
+          if [ -f snyk.sarif ]; then
+            mv snyk.sarif snyk-iac.sarif
           else
             echo "No IaC (Terraform/K8s) found, so no report generated."
           fi
+
       # Upload
       - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v4
@@ -186,13 +185,3 @@ jobs:
           allow_issue_writing: false
           # The name of the artifact that contains the ZAP reports
           artifact_name: "zap_scan"
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          # Path to SARIF file relative to the root of the repository
-          sarif_file: zap_scan.sarif
-          # Optional category for the results
-          # Used to differentiate multiple results for one commit
-          category: zap
-        

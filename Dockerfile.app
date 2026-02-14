@@ -6,6 +6,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+# For avoiding an error during prisma.config.ts loading
+ENV DATABASE_URL="http://localhost"
 RUN npm run generate
 
 RUN npm run build

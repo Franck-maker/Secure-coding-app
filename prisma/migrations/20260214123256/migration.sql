@@ -7,7 +7,6 @@ CREATE TABLE "User" (
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "balance" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "settings" JSONB,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

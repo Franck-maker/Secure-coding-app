@@ -14,7 +14,6 @@ export const POST = withAuth(async (req: Request, context) => {
     }
 
     return NextResponse.json(result);
-
   } catch (error) {
     console.error(error)
     return NextResponse.json({ message: "Transfer failed" }, { status: 500 });

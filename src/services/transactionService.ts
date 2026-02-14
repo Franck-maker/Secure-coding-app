@@ -1,7 +1,7 @@
 import {prisma} from '../lib/prisma';
 
 export class TransactionService {
-    async transfer(senderId: number, receiverEmail: string, amount: number) {
+    async transfer(senderId: number, receiverEmail: string, amount: number): Promise<{ success: boolean; message: string; status: number }> {
         // Business logic flaw: no checking of the amount sign, 
         // allowing negative transfers which can be exploited to increase balance
         /* 
@@ -21,7 +21,8 @@ export class TransactionService {
         if(!receiver){
             return{
                 success : false, 
-                message : "User not found"
+                message: "User not found",
+                status: 404
             }; 
         }
 
@@ -33,7 +34,8 @@ export class TransactionService {
         if(sender.balance < amount){
             return{
                 success : false, 
-                message : "Insufficient balance"
+                message : "Insufficient balance",
+                status: 400
             }; 
         }
 
@@ -41,7 +43,8 @@ export class TransactionService {
         if (senderId === receiver.id) {
             return {
                 success: false,
-                message: "Cannot transfer to self"
+                message: "Cannot transfer to self",
+                status: 400
             }
         }
 
@@ -64,7 +67,7 @@ export class TransactionService {
             }),
         ]); 
 
-        return { success : true, message : "Transfer successful" };
+        return { success : true, message : "Transfer successful", status: 200 };
     }
      
         // Display transaction history

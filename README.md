@@ -2,7 +2,7 @@
 
 A simplified banking application built with Next.js and Prisma. 
 
-> **⚠️ WARNING:** This application contains **intentional security vulnerabilities** (e.g., weak password storage, potential prototype pollution points) for educational and testing purposes. Do not use this code or configuration in a production environment.
+> ⚠️ This application contains intentional security vulnerabilities (e.g., weak password storage, code injection) for the purposes of the related course. Do not use this code or configuration in a production environment.
 
 ## Tech Stack
 *   **Framework:** [Next.js 16](https://nextjs.org/) (App Directory)
@@ -15,6 +15,7 @@ A simplified banking application built with Next.js and Prisma.
 ## Prerequisites
 
 - Docker & Docker Compose (verified with Docker Desktop v4.60.0)
+- Only locally: NodeJS (verified with Node v24.12.0 and NPM v11.9.0)
 
 ## Getting Started
 
@@ -33,16 +34,15 @@ cd Secure-coding-app
 
 #### 2. Run Docker Compose
 
-Optional: Beforehand, set your environment variables with the ".env" file.
-
 Run this project as Docker containers with Docker Compose.
 ```bash
 docker compose up -d --build
 ```
 
-Wait for a few minutes so that the fullstack application builds and the different containers setup themselves.
+Wait for a few minutes so that the fullstack application builds and the different containers setup themselves.  
+When the application is ready, http://localhost:3000 is available.
 
-### Locally
+### Or Locally
 
 Run the database with Docker Compose.
 ```bash
@@ -62,7 +62,7 @@ Optionally: run the database tool management with Docker Compose.
 docker compose up prisma-studio -d
 ``` 
 
-run the fullstack application as develop
+Run the fullstack application as develop
 ```bash
 npm run dev
 ```
@@ -71,16 +71,11 @@ npm run dev
 
 ### Fullstack Application
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 with your browser to see the result.
 
 ### Database
 
 The database will be available at `localhost:5440`.
-
-**Credentials:**
-*   **User:** `bank_admin`
-*   **Password:** `secure_password_123`
-*   **Database:** `bank_db`
 
 It consists of two main models:
 *   **User**: Stores account information.
@@ -95,11 +90,3 @@ You can verify the database state using Prisma Studio: http://localhost:5555
 
 - test@ema.il (password: "12345")
 - admin@ema.il (password: "12345"): is an admin
-
-
-
-## Vulnerabilities
-
-This project is designed to demonstrate specific security flaws, including but not limited to:
-
-1.  **Encoded Password Exposure**: Passwords in the `User` model may be stored without proper hashing/salting.

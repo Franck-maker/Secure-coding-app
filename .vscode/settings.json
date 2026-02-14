@@ -1,3 +1,5 @@
 {
-    "prisma.pinToPrisma6": false
+    "prisma.pinToPrisma6": false,
+    "snyk.advanced.organization": "36f6b25b-6a9a-4a97-9c84-3689740c4d0c",
+    "snyk.advanced.autoSelectOrganization": true
 }

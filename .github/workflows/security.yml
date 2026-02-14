@@ -63,7 +63,7 @@ jobs:
           if [ -f snyk-iac.sarif ]; then
             ls -l snyk-iac.sarif
           else
-            echo "⚠️ Aucun fichier IaC (Terraform/K8s) trouvé, donc pas de rapport généré."
+            echo "⚠️ No IaC (Terraform/K8s) found, so no report generated."
           fi
       # Upload (CodeQL gère automatiquement si un fichier manque tant qu'il y en a d'autres)
       - name: Upload all SARIF reports

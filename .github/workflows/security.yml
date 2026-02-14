@@ -19,14 +19,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
       # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
         uses: snyk/actions/node@master
@@ -65,13 +57,15 @@ jobs:
           if [ -f snyk-iac.sarif ]; then
             ls -l snyk-iac.sarif
           else
-            echo "⚠️ No IaC (Terraform/K8s) found, so no report generated."
+            echo "No IaC (Terraform/K8s) found, so no report generated."
           fi
       # Upload
       - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: '.'
+          sarif_file: './'
+          category: "snyk"
+
   gitleaks:
     name: gitleaks
     runs-on: ubuntu-latest
@@ -83,8 +77,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always() 
-        with:
-          sarif_file: .
 
   codeql:
     name: Analyze (${{ matrix.language }}) with CodeQL
@@ -163,3 +155,43 @@ jobs:
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{matrix.language}}"
+
+  zap:
+    name: ZAP Full Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Docker Compose
+        uses: hoverkraft-tech/compose-action@v2.5.0
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          # Target URL
+          target: "http://localhost:3000"
+          # Relative path of the ZAP configuration file
+          rules_file_name: # optional
+          # The Docker file to be executed
+          docker_name: # default is ghcr.io/zaproxy/zaproxy:stable
+          # Additional command line options
+          cmd_options: # optional
+          # The title for the GitHub issue to be created
+          issue_title: # optional, default is ZAP Full Scan Report
+          # The action status will be set to fail if ZAP identifies any alerts during the full scan
+          fail_action: # optional
+          # Whether Github issues should be created or not
+          allow_issue_writing: false
+          # The name of the artifact that contains the ZAP reports
+          artifact_name: # optional, default is zap_scan
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: zap_scan.sarif
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: zap
+        

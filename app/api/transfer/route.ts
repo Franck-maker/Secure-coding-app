@@ -10,7 +10,7 @@ export const POST = withAuth(async (req: Request, context) => {
     const result = await transactionService.transfer(context.decoded.id, body.receiverEmail, Number(body.amount));
 
     if (!result.success) {
-      return NextResponse.json(result, { status: result.status });
+      return NextResponse.json(result, { status: result.status || 400 });
     }
 
     return NextResponse.json(result);

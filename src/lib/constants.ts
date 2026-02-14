@@ -1,3 +1,8 @@
 // FIXME: Insecure secret key, exposed in code
-// export const SECRET: string = process.env.SECRET ?? '12345';
-export const SECRET: string = '12345';
+// Throw error if not set to prevent server from starting without a secret
+/* 
+if (!process.env.SECRET) {
+  throw new Error("SECRET environment variable is not set. Please set it to a strong, random value before starting the server.");
+}
+export const SECRET: string = process.env.SECRET
+// */ export const SECRET = "12345";

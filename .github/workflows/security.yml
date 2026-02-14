@@ -54,7 +54,7 @@ jobs:
         uses: snyk/actions/node@master
         #continue-on-error: true
         with:
-          command: iac test --sarif-file-output=snyk-iac.sarif
+          command: iac test --sarif-file-output=snyk-iac.sarif --exclude=node_modules
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

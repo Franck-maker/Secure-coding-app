@@ -28,20 +28,26 @@ jobs:
       # Snyk Code (SAST)
       - name: Run Snyk Code for SAST
         uses: snyk/actions/node@master
-        continue-on-error: true
-        with:
-          command: code test --all-projects --sarif-file-output=snyk-code.sarif
+        #continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test --all-projects --sarif-file-output=snyk-code.sarif
+      - name: Verify Snyk Code Output
+        run: ls -l snyk-code.sarif
+        
 
       # Snyk Open Source (SCA)
       - name: Run Snyk Open Source for SCA
         uses: snyk/actions/node@master
-        continue-on-error: true
+        #continue-on-error: true
         with:
           command: test --sarif-file-output=snyk-oss.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: Verify Snyk Open Source Output
+        run: ls -l snyk-oss.sarif
 
       # Snyk IaC (Infrastructure as Code)
       - name: Run Snyk IaC
@@ -52,21 +58,10 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # Upload results to GitHub Security tab
-      - name: Upload Snyk Code SARIF
-        if: success() || failure()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk-code.sarif
-          
-      - name: Upload Snyk Open Source SARIF
-        if: success() || failure()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk-oss.sarif
+      - name: Verify Snyk IaC Output
+        run: ls -l snyk-iac.sarif
 
-      - name: Upload Snyk IaC SARIF
-        if: success() || failure()
+      - name: Upload all SARIF reports
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk-iac.sarif
+          sarif_file: .

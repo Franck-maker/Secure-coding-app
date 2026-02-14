@@ -1,4 +1,0 @@
-# Snyk policy file
-# Exclude directories from all Snyk scans (Code, IaC, Open Source)
-exclude:
-  - node_modules

@@ -67,7 +67,17 @@ jobs:
           fi
       # Upload (CodeQL gère automatiquement si un fichier manque tant qu'il y en a d'autres)
       - name: Upload all SARIF reports
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always() 
         with:
           sarif_file: .

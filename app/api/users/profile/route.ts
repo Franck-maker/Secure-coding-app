@@ -19,10 +19,8 @@ const PutHandler = async (req: Request, context: {
   decoded: { id: number, email: string, isAdmin: boolean }
 }) => {
   try {
-    // FIXME: Insecure Deserialization vulnerability
-    // Extremely dangerous, as it allows, for example, to shutdown the server: 
-    // req.body = `{"something": ( () => process.exit(1) )() }`
-    const body = eval(`[${(await req.text())}]`)[0];
+    // FIX: Insecure Deserialization vulnerability 
+    const body = await req.json();
     const { userId, email } = body;
 
     // Action

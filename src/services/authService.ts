@@ -18,15 +18,16 @@ export class AuthService {
     const { email, password, username } = data;
 
     // 1. Check if user exists
+    //FIX : return a generic message to prevent user enumeration
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
 
     if (existingUser) {
       return { 
-        success: false, 
-        message: "This email is already registered.", 
-        status: 409 
+        success: true, 
+        message: "Invalid email or password", 
+        status: 401
       };
     }
 
@@ -58,22 +59,14 @@ export class AuthService {
     });
 
     // FIXME: User enumeration vulnerability
-    if (user === null) {
+    if (!user || user.password !== null) {
       return {
         success: false,
-        message: "User is not registered",
-        status: 404
+        message: "Invalid email or password",
+        status: 401
       }
     }
 
-    // Check password (Plain text comparison)
-    if (user.password !== password) {
-      return { 
-        success: false, 
-        message: "Password is incorrect", 
-        status: 401 
-      };
-    }
 
     // --- Vulnerability: Insecure JWT Generation ---
     //1. Weak Algorithm (HS256 is fine, but the secret is weak)

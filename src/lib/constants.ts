@@ -5,4 +5,7 @@ if (!process.env.SECRET) {
   throw new Error("SECRET environment variable is not set. Please set it to a strong, random value before starting the server.");
 }
 export const SECRET: string = process.env.SECRET
-// */ export const SECRET = "12345";
+// */ // FIX: Remove the weak, hardcoded fallback secret.
+
+// The secret is now loaded exclusively from environment variables.
+export const SECRET: string = process.env.SECRET!;

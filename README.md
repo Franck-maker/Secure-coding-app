@@ -36,11 +36,17 @@ cd Secure-coding-app
 
 Run this project as Docker containers with Docker Compose.
 ```bash
-docker compose up -d --build
+docker compose up --build
 ```
 
 Wait for a few minutes so that the fullstack application builds and the different containers setup themselves.  
 When the application is ready, http://localhost:3000 is available.
+
+#### Stop the application 
+To stop the application:
+```bash
+docker compose down -v
+```
 
 ### Or Locally
 
@@ -66,6 +72,15 @@ Run the fullstack application as develop
 ```bash
 npm run dev
 ```
+
+#### Stop the application
+
+To stop the database and management tools:
+```bash
+docker compose down -v
+```
+
+And to stop the web application, just hit CTRL + C on your terminal or kill the latter. 
 
 ## The Application 
 

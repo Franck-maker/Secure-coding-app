@@ -1910,6 +1910,213 @@
           ]
         },
         {
+          "name": "Password in URL",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "7b7e4595-53f5-4deb-bacb-c71dad5861b3",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "3b75cdeb-28d3-4784-9fd0-4ef03d1fa27e",
+                "exec": [
+                  "pm.test(\"Should not be allowed to use this method\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eq(405);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "id": "fa51ddbc-f7f0-491b-afda-c628b5ad80ad",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login?email={{test_user_email}}&password={{test_user_password}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{test_user_email}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{test_user_password}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a982a029-7415-4821-9a64-766c9d6d62dd",
+              "name": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{payload}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login?email={{test_user_email}}&password={{test_user_password}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ],
+                  "query": [
+                    {
+                      "key": "email",
+                      "value": "{{test_user_email}}"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{test_user_password}}"
+                    }
+                  ]
+                }
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sun, 15 Feb 2026 13:34:48 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": null
+            },
+            {
+              "id": "5b65c373-263a-476a-b067-daa00177cdde",
+              "name": "Vulnerable",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{{payload}}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login?email={{test_user_email}}&password={{test_user_password}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ],
+                  "query": [
+                    {
+                      "key": "email",
+                      "value": "{{test_user_email}}"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{test_user_password}}"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "set-cookie",
+                  "value": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGVtYS5pbCIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NzExNjIxNDksImV4cCI6MTc3MTE2NTc0OX0.R8L6MiK6h27qtavWZT7f1DBrD3RI7AbtdpFLjEDPCng; Path=/; Expires=Sun, 15 Feb 2026 14:29:09 GMT; Max-Age=3600; HttpOnly"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sun, 15 Feb 2026 13:29:09 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"message\": \"Login successful (from insecure GET)\",\n    \"user\": {\n        \"id\": 1,\n        \"email\": \"test@ema.il\",\n        \"isAdmin\": false\n    }\n}"
+            }
+          ]
+        },
+        {
           "name": "User enumeration",
           "event": [
             {
@@ -1956,6 +2163,65 @@
           },
           "response": [
             {
+              "id": "c5fd0ee5-b57d-4a9f-8e9e-45bd0b00bbc3",
+              "name": "OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"something@email.com\",\r\n    \"password\": \"123456\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "Text",
+              "header": [
+                {
+                  "key": "vary",
+                  "value": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Date",
+                  "value": "Sun, 15 Feb 2026 13:40:55 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"message\": \"Invalid email or password\",\n    \"status\": 401\n}"
+            },
+            {
               "id": "1bdf792d-1cb3-4c62-bd4a-6c453c1e67a9",
               "name": "Vulnerable",
               "originalRequest": {
@@ -1984,7 +2250,7 @@
               },
               "status": "Not Found",
               "code": 404,
-              "_postman_previewlanguage": null,
+              "_postman_previewlanguage": "Text",
               "header": [
                 {
                   "key": "vary",
@@ -2033,57 +2299,65 @@
   },
   "variable": [
     {
-      "id": "104cbaa9-f678-4962-83cd-45f7e385a996",
+      "id": "80632e57-a3aa-4463-80ce-acd73d6e38ea",
       "key": "baseUrl",
-      "value": "http://localhost:3000"
+      "value": "http://localhost:3000",
+      "description": "Base URL of the API"
     },
     {
-      "id": "5d5d932a-3fc1-4236-a50d-f4b83b96d73a",
+      "id": "f00a4e5c-482d-41d0-a4c6-b0198f8e8082",
       "key": "password",
-      "value": "tgv3Cehs56x@mt!6DkgR"
+      "value": "tgv3Cehs56x@mt!6DkgR",
+      "description": "Some password for the register test"
     },
     {
-      "id": "1419aed1-35aa-49f0-9f5f-8bca48d62510",
+      "id": "49c377c8-9646-4498-93c6-eb4000790502",
       "key": "e2e_user_email",
-      "value": ""
+      "value": "",
+      "description": "A dynamically set email for the register test"
     },
     {
-      "id": "0a47e574-0e1e-4022-acd6-8f1566147518",
+      "id": "186ee318-a4e9-4a22-8e32-fc867c0bccb6",
       "key": "e2e_user_password",
       "value": ""
     },
     {
-      "id": "1c296bca-0f04-4512-886e-a66c8739ab55",
+      "id": "1d1a353d-ef78-4dd5-9782-9d2ff67c593a",
       "key": "e2e_user_id",
-      "value": ""
+      "value": "",
+      "description": "A dynamically set id for the register test"
     },
     {
-      "id": "004b1e99-2f19-4f02-9554-0b3b82aba993",
+      "id": "c9535429-3c8c-4c55-8a78-36e55c6ed3f9",
       "key": "e2e_user_test_token",
       "value": ""
     },
     {
-      "id": "92b639c6-72bc-47f8-ba54-575b4adfd73f",
+      "id": "afbf3a47-aeb2-4149-8b25-20f0e7568e0f",
       "key": "e2e_receiver_email",
-      "value": "admin@ema.il"
+      "value": "admin@ema.il",
+      "description": "The email of the receiving transfer for the transfer tests"
     },
     {
-      "id": "22aeed5a-38ae-435e-ad20-60af0e0a458a",
+      "id": "dab5d1d4-2001-4e85-9a52-916537bac967",
       "key": "test_user_email",
-      "value": "test@ema.il"
+      "value": "test@ema.il",
+      "description": "The email for the \"Require Auth\" tests"
     },
     {
-      "id": "5dc0c095-5345-4ebd-ac15-e382b7207a8c",
+      "id": "eae192fc-ac14-4fc3-aa87-8b8e6f0a4628",
       "key": "test_user_password",
-      "value": "12345"
+      "value": "12345",
+      "description": "The password of the associated account for the \"Require Auth\" tests"
     },
     {
-      "id": "0c99106d-0c75-4970-87e5-987707863088",
+      "id": "012777bd-95dd-4b41-b0a0-57e3b4f12eec",
       "key": "test_user_new_email",
-      "value": "test2@ema.il"
+      "value": "test2@ema.il",
+      "description": "The new email for the update profile test"
     },
     {
-      "id": "932b6c0d-eed7-4f3b-b834-2e83e72b39c5",
+      "id": "88c51874-e428-43ab-884d-1fe24b65a1ca",
       "key": "apiKey",
       "value": ""
     }

@@ -37,7 +37,7 @@ services:
       - bank_network
     environment:
       DATABASE_URL: "postgres://bank_admin:secure_password_123@postgres:5432/bank_db"
-      SECRET: "e8b5a7e9f8c1d0a3b2c4d6e8f7a9b0c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8"
+      SECRET: ${SECRET}
     stdin_open: true
     tty: true # Keeps the container running for debugging
 

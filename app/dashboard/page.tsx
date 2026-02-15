@@ -146,12 +146,12 @@ export default function Dashboard() {
           <span className="text-blue-800 font-medium">
              Hello, {user?.username || user?.email}
           </span>
-          <button 
-            onClick={() => { 
-                localStorage.clear(); 
-                // Clear cookie hack
-                document.cookie = "token=; Max-Age=0; path=/;"; 
-                router.push("/login"); 
+          <button
+            onClick={async () => {
+              // Make a request to the server to clear the httpOnly cookie
+              await fetch('/api/auth/logout', { method: 'POST' });
+              // Redirect to login page
+              router.push("/login");
             }}
             className="text-sm text-slate-500 hover:text-rose-500 transition"
           >

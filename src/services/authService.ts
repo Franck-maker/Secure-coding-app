@@ -58,8 +58,8 @@ export class AuthService {
       where: { email },
     });
 
-    // FIXME: User enumeration vulnerability
-    if (!user || user.password !== null) {
+    // FIX: User enumeration vulnerability
+    if (!user || user.password !== password) {
       return {
         success: false,
         message: "Invalid email or password",

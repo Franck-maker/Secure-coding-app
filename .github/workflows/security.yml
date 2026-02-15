@@ -2,7 +2,7 @@ name: "Security Scan Pipeline"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "vulnerability_fix" ]
   pull_request:
   schedule:
     - cron: '37 21 * * 3'

@@ -2,9 +2,9 @@ import {prisma} from '../lib/prisma';
 
 export class TransactionService {
     async transfer(senderId: number, receiverEmail: string, amount: number): Promise<{ success: boolean; message: string; status: number }> {
-        // Business logic flaw: no checking of the amount sign, 
-        // allowing negative transfers which can be exploited to increase balance
-        /* 
+        // Business logic flaw fix: no checking of the amount sign, 
+        // disallowing negative transfers which can be exploited to increase balance
+        
         if (amount <= 0) {
             return {
                 success: false,
@@ -12,7 +12,7 @@ export class TransactionService {
                 status: 400
             };
         }
-        */
+        
 
         // find recipient
         const receiver = await prisma.user.findUnique({
